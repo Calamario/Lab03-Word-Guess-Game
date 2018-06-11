@@ -19,7 +19,7 @@ letter will fill in the empty spots on the mystery word.
 
 ## Other Details
 * This also includes unit testing
-* To 
+* To access it open UnitTest1.cs in Guessing-Game-Test
 * Run the prewritten tests or create your own.
 
 ## What it looks like
