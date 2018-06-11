@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Word_Guessing_Game
 {
-    class Program
+    public class Program
     {
-        static string path = "../../../MyFile.txt";
+        public static string path = "../../../MyFile.txt";
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Word_Guessing_Game
         /// Creates a file with a given array of strings. Prints each item in the array on a new line
         /// </summary>
         /// <param name="words"> takes in a string of arrays </param>
-        static void CreateFile(string[] words)
+        public static string CreateFile(string[] words)
         {
             try
             {
@@ -47,18 +47,25 @@ namespace Word_Guessing_Game
                         }
                     }
                 }
+                return "File has been made";
 
             }
             catch (Exception)
             {
-                throw;
+                return "error";
             }
+        }
+
+        public static string DeleteFile()
+        {
+            File.Delete(path);
+            return "file deleted";
         }
 
         /// <summary>
         /// The main menu wrapped in a while loop until user inputs 3
         /// </summary>
-        static void MainMenu()
+        public static void MainMenu()
         {
             try
             {
@@ -81,7 +88,6 @@ namespace Word_Guessing_Game
                             break;
                         default:
                             flag = false;
-                            File.Delete(path);
                             break;
                     }
 
@@ -95,7 +101,10 @@ namespace Word_Guessing_Game
             }
         }
 
-        static void PlayGame()
+        /// <summary>
+        /// The main logic for the game. 
+        /// </summary>
+        public static void PlayGame()
         {
             //From the random class instantiate an object and give it the reference type of random
             Random randomObj = new Random();
@@ -112,6 +121,7 @@ namespace Word_Guessing_Game
             //Create a new string array the size of the length of the mystery word
             string[] displayWord = new string[mysteryWord.Length];
 
+            //Empty String to hold user guesses
             string guessedLetter = "";
 
             for (int i = 0; i < mysteryWord.Length; i++)
@@ -127,7 +137,7 @@ namespace Word_Guessing_Game
                 Console.WriteLine("Guess a Letter");
                 string letter = Console.ReadLine();
 
-                if (letter != null && (mysteryWord.ToLower().Contains(letter.ToLower())) && !guessedLetter.ToLower().Contains(letter.ToLower()))
+                if (letter != null && (mysteryWord.ToLower().Contains(letter.ToLower())) && !guessedLetter.Contains(letter.ToLower()))
                 {
                     for (int i = 0; i < mysteryWord.Length; i++)
                     {
@@ -137,12 +147,12 @@ namespace Word_Guessing_Game
                         }
                     }
                 }
-                guessedLetter += letter;
+                guessedLetter += letter.ToLower();
 
                 DisplayCurrentWord(displayWord);
 
                 Console.WriteLine($"The guessed letters are: {guessedLetter}");
-
+                
                 if (!displayWord.Contains(" _ "))
                 {
                     correct = true;
@@ -153,7 +163,11 @@ namespace Word_Guessing_Game
             }
         }
 
-        static void DisplayCurrentWord(string[] word)
+        /// <summary>
+        /// To display in console the current status of the mystery word
+        /// </summary>
+        /// <param name="word"> Takes in an array of string (each string is a letter or _)</param>
+        public static void DisplayCurrentWord(string[] word)
         {
             foreach (string item in word)
             {
@@ -163,9 +177,25 @@ namespace Word_Guessing_Game
         }
 
         /// <summary>
+        /// The same logic behind our game. Created this method to test if the logic is sound.
+        /// </summary>
+        /// <param name="word">The string we will be checking against</param>
+        /// <param name="letter">The letter we will be checking the string for</param>
+        /// <param name="alreadyGuessed">letters already guessed</param>
+        /// <returns></returns>
+        public static bool CheckIfLetterIsInWord(string word, string letter, string alreadyGuessed)
+        {
+            if (letter != null && (word.ToLower().Contains(letter.ToLower())) && !alreadyGuessed.Contains(letter.ToLower()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// AdminView wrapped in a while loop until chosen 4 or wrong input 
         /// </summary>
-        static void AdminView()
+        public static void AdminView()
         {
             try
             {
@@ -186,7 +216,9 @@ namespace Word_Guessing_Game
                         case 2:
                             Console.WriteLine("What word would you like to add?");
                             string insertWordIs = Console.ReadLine();
-                            AddWord(insertWordIs);
+                            string addedWord = AddWord(insertWordIs);
+                            Console.WriteLine(addedWord);
+                            Console.ReadLine();
                             break;
                         case 3:
                             Console.WriteLine("What word would you like to delete?");
@@ -210,20 +242,32 @@ namespace Word_Guessing_Game
             }
         }
 
-        static void ViewList()
+        /// <summary>
+        /// To go read through all the possible words in the text and display on console
+        /// </summary>
+        /// <returns> returns the read lines as one word </returns>
+        public static string ViewList()
         {
+            string combined = "";
 
             string[] myText = File.ReadAllLines(path);
 
             foreach (string word in myText)
             {
                 Console.WriteLine(word);
+                combined += word;
             }
             Console.WriteLine();
 
+            return combined;
         }
 
-        static string AddWord(string word)
+        /// <summary>
+        /// Adds a user inputted word to the list of possible words used in the game. 
+        /// </summary>
+        /// <param name="word"> takes in a string that the user inputted </param>
+        /// <returns> A string to confirm addition </returns>
+        public static string AddWord(string word)
         {
             try
             {
@@ -252,7 +296,13 @@ namespace Word_Guessing_Game
             }
         }
 
-        static string DeleteWord(string word)
+        /// <summary>
+        /// Deletes the user inputted from the list of possible word to be used in the game. 
+        /// It actaully makes a new file without the user inputted word and replaces the old file with the new one
+        /// </summary>
+        /// <param name="word"> the user inputted string to be deleted from the list </param>
+        /// <returns> a string to confirm it has finished </returns>
+        public static string DeleteWord(string word)
         {
             try
             {
